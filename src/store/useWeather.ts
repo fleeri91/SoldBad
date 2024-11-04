@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { SMHIPointRoot } from '../types/SMHI'
+import { SMHIPointRoot } from 'types/SMHI'
 
 type WeatherState = {
   pointData: SMHIPointRoot | null

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Feature, LocationRoot } from '../types/Location'
+import { LocationRoot, Feature } from 'types/Location'
 
 type LocationState = {
   locations: Feature[]
