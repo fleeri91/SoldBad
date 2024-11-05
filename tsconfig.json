@@ -9,7 +9,7 @@
       "constants/*": ["src/constants/*"],
       "contexts/*": ["src/contexts/*"],
       "hooks/*": ["src/hooks/*"],
-      "screens/*": ["src/screen/*"],
+      "screens/*": ["src/screens/*"],
       "store/*": ["src/store/*"],
       "types/*": ["src/types/*"],
       "utils/*": ["src/utils/*"]
