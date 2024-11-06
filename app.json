@@ -11,6 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "infoPlist": {
+      "NSLocationWhenInUseUsageDescription": "This app needs access to your location to suggest nearby places."
+    },
     "ios": {
       "supportsTablet": true
     },
