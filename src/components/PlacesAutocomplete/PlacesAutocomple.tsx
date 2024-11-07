@@ -13,7 +13,7 @@ const PlacesInput = () => {
         placeholder="Välj plats"
         onPress={(data, details = null) => setCurrentLocation(data, details)}
         query={{
-          key: 'AIzaSyD6x2_xsPI5inRVsDFDvHaY1ciNumYNE1w',
+          key: '',
           components: 'country:se',
           types: '(cities)',
         }}
