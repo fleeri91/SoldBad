@@ -1,3 +1,4 @@
+import PlacesInput from 'components/PlacesAutocomplete'
 import * as Location from 'expo-location'
 import React, { useState } from 'react'
 import { View, Text, Button, Alert, StyleSheet } from 'react-native'
@@ -21,8 +22,11 @@ const OnboardingView = () => {
 
   return (
     <View style={styles.container}>
+      {/*
       <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Allow GPS Location</Text>
       <Button title="Allow GPS" onPress={requestLocationPermission} />
+      */}
+      <PlacesInput />
     </View>
   )
 }
