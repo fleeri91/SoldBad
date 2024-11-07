@@ -1,26 +1,32 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 
-const OnboardingScreen = () => {
+import { useGeoStore } from 'store/useGeo'
+
+const MapScreen = () => {
+  const { geoLocation } = useGeoStore()
+
   return (
-    <MapView
-      style={styles.mapView}
-      region={{
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
-      }}
-    >
-      <Marker
-        coordinate={{
-          latitude: 0,
-          longitude: 0,
+    <View style={styles.container}>
+      <MapView
+        style={styles.mapView}
+        region={{
+          latitude: geoLocation?.coords.latitude ?? 0,
+          longitude: geoLocation?.coords.longitude ?? 0,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         }}
-        title="You are here"
-        description="Your current location"
-      />
-    </MapView>
+      >
+        <Marker
+          coordinate={{
+            latitude: geoLocation?.coords.latitude ?? 0,
+            longitude: geoLocation?.coords.longitude ?? 0,
+          }}
+          title="You are here"
+          description="Your current location"
+        />
+      </MapView>
+    </View>
   )
 }
 
@@ -37,4 +43,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default OnboardingScreen
+export default MapScreen
