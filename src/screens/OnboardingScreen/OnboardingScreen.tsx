@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { View, Text, Button, Alert, StyleSheet } from 'react-native'
 import { useGeoStore } from 'store/useGeo'
 
-const OnboardingView = () => {
+const OnboardingScreen = () => {
   const [locationEnabled, setLocationEnabled] = useState(false)
 
   const { setGeoLocation } = useGeoStore()
@@ -22,11 +22,8 @@ const OnboardingView = () => {
 
   return (
     <View style={styles.container}>
-      {/*
       <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Allow GPS Location</Text>
       <Button title="Allow GPS" onPress={requestLocationPermission} />
-      */}
-      <PlacesInput />
     </View>
   )
 }
@@ -40,4 +37,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default OnboardingView
+export default OnboardingScreen
