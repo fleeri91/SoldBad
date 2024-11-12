@@ -1,35 +1,21 @@
-import React, { useState } from 'react'
-import { Text, Alert, StyleSheet, Button, View } from 'react-native'
-import * as Location from 'expo-location'
+import React from 'react'
+import { StyleSheet, View, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import Onboarding from 'react-native-onboarding-swiper'
 import Slider from '@react-native-community/slider'
 
 import { RootStackParamList } from 'navigation/MainNavigation'
-
-import { useGeoStore } from 'store/useGeo'
 import { usePreferencesStore } from 'store/usePreferences'
+
+import Typography from 'components/Typography'
 
 type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>
 
 const OnboardingScreen = () => {
-  const [locationEnabled, setLocationEnabled] = useState(false)
-  const { setGeoLocation } = useGeoStore()
   const { setDistance, distance } = usePreferencesStore()
 
   const navigation = useNavigation<OnboardingScreenNavigationProp>()
-
-  const requestLocationPermission = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync()
-    if (status === 'granted') {
-      setLocationEnabled(true)
-      const location = await Location.getCurrentPositionAsync({})
-      setGeoLocation(location)
-    } else {
-      Alert.alert('Permission Denied', 'Location access is required to use GPS.')
-    }
-  }
 
   const onDone = () => {
     navigation.navigate('Map')
@@ -37,48 +23,67 @@ const OnboardingScreen = () => {
 
   const onBoardingScreens = [
     {
-      backgroundColor: '#fff',
-      image: <Text style={{ fontSize: 50 }}>👋</Text>,
-      title: 'Welcome!',
-      subtitle: 'This is an onboarding screen where you can introduce your app.',
-    },
-    {
-      backgroundColor: '#fff',
-      image: <Text style={{ fontSize: 50 }}>🌍</Text>,
-      title: 'Allow Location Access',
-      subtitle: (
-        <View>
-          <Text>To make the app work, we need your GPS location.</Text>
-          <Button title="Enable Location" onPress={requestLocationPermission} />
+      backgroundColor: '#f0f4f7',
+      image: (
+        <View style={styles.imageContainer}>
+          <Text style={styles.emoji}>🗺️</Text>
         </View>
       ),
-    },
-    {
-      backgroundColor: '#fff',
-      image: <Text style={{ fontSize: 50 }}>🗺️</Text>,
-      title: 'Set Travel Distance',
+      title: (
+        <View style={styles.titleContainer}>
+          <Typography variant="title" align="center">
+            Ange önskat avstånd
+          </Typography>
+        </View>
+      ),
       subtitle: (
-        <View>
-          <Text>Select your preferred distance (km): {distance} km</Text>
+        <View style={styles.subtitleContainer}>
+          <Typography variant="label" align="center" style={styles.subtitleText}>
+            {distance} km
+          </Typography>
           <Slider
-            style={{ width: 200, height: 40 }}
-            minimumValue={10}
+            style={styles.slider}
+            minimumValue={1}
             maximumValue={100}
-            step={10}
+            step={1}
             value={distance}
             onValueChange={(value) => setDistance(value)}
+            accessibilityLabel="Travel distance slider"
           />
         </View>
       ),
-      onDone: onDone,
     },
   ]
 
-  return (
-    <Onboarding pages={onBoardingScreens} onSkip={() => console.log('Skipped')} onDone={onDone} />
-  )
+  return <Onboarding pages={onBoardingScreens} onDone={onDone} showSkip={false} />
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  imageContainer: {
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 64,
+  },
+  subtitleContainer: {
+    alignItems: 'center',
+    marginHorizontal: 16,
+  },
+  emoji: {
+    fontSize: 50,
+    textAlign: 'center',
+  },
+  subtitleText: {
+    textAlign: 'center',
+  },
+  slider: {
+    marginVertical: 16,
+    width: 200,
+    height: 40,
+  },
+})
 
 export default OnboardingScreen
