@@ -1,7 +1,7 @@
 import React from 'react'
 import { Alert, StyleSheet, View, Text } from 'react-native'
 import * as Location from 'expo-location'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useTheme } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import Onboarding from 'react-native-onboarding-swiper'
 
@@ -14,6 +14,7 @@ import Button from 'components/Button'
 type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AllowPermission'>
 
 const AllowPermissionScreen = () => {
+  const { colors } = useTheme()
   const { geoLocation, setGeoLocation } = useGeoStore()
 
   const navigation = useNavigation<OnboardingScreenNavigationProp>()
@@ -34,7 +35,7 @@ const AllowPermissionScreen = () => {
 
   const onBoardingScreens = [
     {
-      backgroundColor: '#f0f4f7',
+      backgroundColor: colors.background,
       image: (
         <View style={styles.imageContainer}>
           <Text style={styles.emoji}>🌍</Text>
