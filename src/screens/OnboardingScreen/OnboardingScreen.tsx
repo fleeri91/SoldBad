@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useTheme } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import Onboarding from 'react-native-onboarding-swiper'
 import Slider from '@react-native-community/slider'
@@ -13,6 +13,8 @@ import Typography from 'components/Typography'
 type OnboardingScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Onboarding'>
 
 const OnboardingScreen = () => {
+  const { colors } = useTheme()
+
   const { setDistance, distance } = usePreferencesStore()
 
   const navigation = useNavigation<OnboardingScreenNavigationProp>()
@@ -23,7 +25,7 @@ const OnboardingScreen = () => {
 
   const onBoardingScreens = [
     {
-      backgroundColor: '#f0f4f7',
+      backgroundColor: colors.background,
       image: (
         <View style={styles.imageContainer}>
           <Text style={styles.emoji}>🗺️</Text>

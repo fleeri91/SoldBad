@@ -1,5 +1,9 @@
+import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
+import { useColorScheme } from 'react-native'
+
+import { CustomLightTheme, CustomDarkTheme } from 'src/theme/colors'
 
 import OnboardingScreen from 'screens/OnboardingScreen'
 import MapScreen from 'screens/MapScreen'
@@ -17,9 +21,12 @@ const Stack = createStackNavigator<RootStackParamList>()
 
 const MainNavigation = () => {
   const { geoLocation } = useGeoStore()
+  const colorScheme = useColorScheme()
+
+  const theme = colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={theme}>
       <Stack.Navigator initialRouteName={geoLocation ? 'Onboarding' : 'AllowPermission'}>
         <Stack.Screen
           name="AllowPermission"

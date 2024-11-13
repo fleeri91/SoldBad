@@ -1,3 +1,4 @@
+import { useTheme } from '@react-navigation/native'
 import React from 'react'
 import { Text, StyleSheet, TextProps } from 'react-native'
 import { fontSize } from 'src/theme/fontSize'
@@ -10,7 +11,9 @@ interface TypographyProps extends TextProps {
 }
 
 const Typography = ({ variant = 'body', children, align = 'left' }: TypographyProps) => {
-  return <Text style={[styles[variant], { textAlign: align }]}>{children}</Text>
+  const { colors } = useTheme()
+
+  return <Text style={[styles[variant], { textAlign: align, color: colors.text }]}>{children}</Text>
 }
 
 const styles = StyleSheet.create({
