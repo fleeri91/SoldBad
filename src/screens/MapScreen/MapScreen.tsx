@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Marker } from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import MapViewCluster from 'react-native-map-clustering'
 
 import { useGeoStore } from 'store/useGeo'
 import { usePreferencesStore } from 'store/usePreferences'
 import { useLocationStore } from 'store/useLocations'
-
-import UserLocationSVG from 'assets/svg/user-location.svg'
 
 const MapScreen = () => {
   const { geoLocation } = useGeoStore()
@@ -23,7 +21,7 @@ const MapScreen = () => {
 
   const [markersReady, setMarkersReady] = useState<boolean>(false)
 
-  const mapRef = useRef<MapViewCluster>(null)
+  const mapRef = useRef<MapView>(null)
 
   useEffect(() => {
     getLocations()
@@ -50,19 +48,20 @@ const MapScreen = () => {
     if (filteredLocations.length > 0) {
       setMarkersReady(true)
     }
+    console.log(filteredLocations.length)
   }, [filteredLocations])
 
   const onMapReady = () => {
     if (mapRef.current && markersReady) {
       const coordinates = filteredLocations
         .map((location) => {
-          const coords = location.geometry?.coordinates
-          if (coords && coords.length === 2) {
-            return { latitude: coords[1], longitude: coords[0] }
+          const coords = location.coords
+          if (coords) {
+            return { latitude: coords.lat, longitude: coords.lon }
           }
           return null
         })
-        .filter(Boolean)
+        .filter((coord): coord is { latitude: number; longitude: number } => coord !== null)
 
       if (geoLocation?.coords?.latitude && geoLocation?.coords?.longitude) {
         coordinates.push({
@@ -90,16 +89,12 @@ const MapScreen = () => {
         showsUserLocation={true}
       >
         {filteredLocations.map((location) => {
-          const coordinates = location.geometry?.coordinates
-          if (!coordinates || coordinates.length < 2) return null
+          if (!location.coords) return null
 
-          const [longitude, latitude] = coordinates
           return (
             <Marker
               key={location.id}
-              coordinate={{ latitude, longitude }}
-              title={location.properties?.NAMN || 'Location'}
-              description={location.properties?.KMN_NAMN || ''}
+              coordinate={{ latitude: location.coords.lat, longitude: location.coords.lon }}
             />
           )
         })}
