@@ -1,27 +1,10 @@
-export interface LocationRoot {
-  type: string
-  features: Feature[]
-  totalFeatures: number
-  numberMatched: number
-  numberReturned: number
-  timeStamp: string
-}
+import { TimeSerie } from './SMHI'
 
-export interface Feature {
-  type: string
+export interface Location {
   id: string
-  geometry?: Geometry
-  geometry_name: string
-  properties: Properties
-}
-
-export interface Geometry {
-  type: string
-  coordinates: number[]
-}
-
-export interface Properties {
-  NUTSKOD: string
-  NAMN: string
-  KMN_NAMN: string
+  coords: {
+    lat: number
+    lon: number
+  }
+  weather: TimeSerie
 }
