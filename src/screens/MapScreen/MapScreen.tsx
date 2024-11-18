@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import MapView, { Marker } from 'react-native-maps'
+import { StyleSheet, TouchableHighlight, View, Text } from 'react-native'
+import MapView, { Marker, Callout } from 'react-native-maps'
 import MapViewCluster from 'react-native-map-clustering'
 
 import { useGeoStore } from 'store/useGeo'
@@ -48,7 +48,6 @@ const MapScreen = () => {
     if (filteredLocations.length > 0) {
       setMarkersReady(true)
     }
-    console.log(filteredLocations.length)
   }, [filteredLocations])
 
   const onMapReady = () => {
@@ -95,7 +94,23 @@ const MapScreen = () => {
             <Marker
               key={location.id}
               coordinate={{ latitude: location.coords.lat, longitude: location.coords.lon }}
-            />
+            >
+              <Callout tooltip>
+                <TouchableHighlight underlayColor="#eeeeee" style={styles.calloutContainer}>
+                  <View style={styles.calloutContent}>
+                    <Text
+                      style={styles.temperatureText}
+                    >{`Temp: ${location.weather[0].temperature}`}</Text>
+                    <Text
+                      style={styles.temperatureText}
+                    >{`Wind: ${location.weather[0].windSpeed}`}</Text>
+                    <Text
+                      style={styles.temperatureText}
+                    >{`Cloud: ${location.weather[0].cloud_level}`}</Text>
+                  </View>
+                </TouchableHighlight>
+              </Callout>
+            </Marker>
           )
         })}
       </MapViewCluster>
@@ -113,6 +128,26 @@ const styles = StyleSheet.create({
   mapView: {
     height: '100%',
     width: '100%',
+  },
+  calloutContainer: {
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 3,
+  },
+  calloutContent: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  temperatureText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
   },
 })
 
