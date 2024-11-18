@@ -46,7 +46,7 @@ const OnboardingScreen = () => {
           <Slider
             style={styles.slider}
             minimumValue={1}
-            maximumValue={100}
+            maximumValue={10}
             step={1}
             value={distance}
             onValueChange={(value) => setDistance(value)}
