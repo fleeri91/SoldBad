@@ -10,6 +10,7 @@ import MapScreen from 'screens/MapScreen'
 import AllowPermissionScreen from 'screens/AllowPermissionScreen'
 
 import { useGeoStore } from 'store/useGeo'
+import { useSettingsStore } from 'store/useSettings'
 
 export type RootStackParamList = {
   AllowPermission: undefined
@@ -23,11 +24,13 @@ const MainNavigation = () => {
   const { geoLocation } = useGeoStore()
   const colorScheme = useColorScheme()
 
-  const theme = colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme
+  const { theme } = useSettingsStore()
+
+  const appTheme = (theme ?? colorScheme === 'dark') ? CustomDarkTheme : CustomLightTheme
 
   return (
-    <NavigationContainer theme={theme}>
-      <Stack.Navigator initialRouteName={geoLocation ? 'Onboarding' : 'AllowPermission'}>
+    <NavigationContainer theme={appTheme}>
+      <Stack.Navigator initialRouteName={!geoLocation ? 'Onboarding' : 'AllowPermission'}>
         <Stack.Screen
           name="AllowPermission"
           options={{ headerShown: false }}
