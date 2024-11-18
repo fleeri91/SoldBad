@@ -5,7 +5,8 @@ import { getDistance } from 'geolib'
 
 import { FeatureRoot } from 'types/BadVattenFeature'
 import { Location } from 'types/Location'
-import { getWeatherData } from 'api/smhi'
+
+const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
 type LocationState = {
   locations: Location[]
@@ -66,26 +67,37 @@ export const useLocationStore = create<LocationState & LocationActions>()(
       },
       filterLocationsByRadius: async (latitude, longitude, radius) => {
         const locations = get().locations
-        const filtered = await Promise.all(
-          locations
-            .filter((location) => {
-              const { lat, lon } = location.coords
-              const distance = getDistance(
-                { latitude, longitude },
-                { latitude: lat, longitude: lon }
-              )
-              return distance <= radius * 1000
-            })
-            .map(async (location) => {
-              const weather = await getWeatherData(location.coords.lat, location.coords.lon)
-              console.log(weather[0].parameters[0].name)
-              return { ...location, weather }
-            })
-        )
 
-        set({
-          filteredLocations: filtered,
+        const filtered = locations.filter((location) => {
+          const { lat, lon } = location.coords
+          const distance = getDistance({ latitude, longitude }, { latitude: lat, longitude: lon })
+          return distance <= radius * 1000
         })
+
+        try {
+          const response = await fetch(`${apiUrl}/weather`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              locations: filtered,
+            }),
+          })
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch weather data')
+          }
+
+          const weatherResults: Location[] = await response.json()
+
+          set({
+            filteredLocations: weatherResults,
+          })
+        } catch (error) {
+          console.error('Error fetching weather data:', error)
+          set({ error: 'Failed to fetch weather data' })
+        }
       },
     }),
     {
