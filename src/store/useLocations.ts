@@ -1,12 +1,15 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { LocationRoot, Feature } from 'types/Location'
 import { getDistance } from 'geolib'
 
+import { FeatureRoot } from 'types/BadVattenFeature'
+import { Location } from 'types/Location'
+import { getWeatherData } from 'api/smhi'
+
 type LocationState = {
-  locations: Feature[]
-  filteredLocations: Feature[]
+  locations: Location[]
+  filteredLocations: Location[]
   loading: boolean
   error: string | null
 }
@@ -30,10 +33,29 @@ export const useLocationStore = create<LocationState & LocationActions>()(
       getLocations: async () => {
         try {
           const response = await fetch('https://badplatsen.havochvatten.se/badplatsen/api/feature/')
-          const data: LocationRoot = await response.json()
+          const data: FeatureRoot = await response.json()
+
+          const locations: Location[] = data.features
+            .map((feature) => {
+              const { id, geometry } = feature
+              const coords = geometry?.coordinates
+
+              if (coords && coords.length === 2) {
+                const [lon, lat] = coords
+                return {
+                  id,
+                  coords: {
+                    lat,
+                    lon,
+                  },
+                }
+              }
+              return null
+            })
+            .filter((location) => location !== null) as Location[]
 
           set({
-            locations: data.features,
+            locations,
             loading: false,
             error: null,
           })
@@ -42,20 +64,25 @@ export const useLocationStore = create<LocationState & LocationActions>()(
           set({ loading: false, error: 'Failed to load locations' })
         }
       },
-      filterLocationsByRadius: (latitude, longitude, radius) => {
+      filterLocationsByRadius: async (latitude, longitude, radius) => {
         const locations = get().locations
-        const filtered = locations.filter((location) => {
-          const coords = location.geometry?.coordinates
-          if (coords && coords.length === 2) {
-            const [locationLongitude, locationLatitude] = coords
-            const distance = getDistance(
-              { latitude, longitude },
-              { latitude: locationLatitude, longitude: locationLongitude }
-            )
-            return distance <= radius * 1000
-          }
-          return false
-        })
+        const filtered = await Promise.all(
+          locations
+            .filter((location) => {
+              const { lat, lon } = location.coords
+              const distance = getDistance(
+                { latitude, longitude },
+                { latitude: lat, longitude: lon }
+              )
+              return distance <= radius * 1000
+            })
+            .map(async (location) => {
+              const weather = await getWeatherData(location.coords.lat, location.coords.lon)
+              console.log(weather[0].parameters[0].name)
+              return { ...location, weather }
+            })
+        )
+
         set({
           filteredLocations: filtered,
         })
