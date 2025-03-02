@@ -10,7 +10,8 @@ import { useLocationStore } from 'store/useLocations'
 const MapScreen = () => {
   const { geoLocation } = useGeoStore()
   const { distance } = usePreferencesStore()
-  const { filteredLocations, getLocations, filterLocationsByRadius } = useLocationStore()
+  const { filteredLocations, getLocations, filterLocationsByRadius, getBathingWaters } =
+    useLocationStore()
 
   const [region, setRegion] = useState({
     latitude: 0,
@@ -26,6 +27,10 @@ const MapScreen = () => {
   useEffect(() => {
     getLocations()
   }, [getLocations])
+
+  useEffect(() => {
+    getBathingWaters()
+  }, [getBathingWaters])
 
   useEffect(() => {
     if (geoLocation?.coords?.latitude && geoLocation?.coords?.longitude) {
@@ -94,23 +99,7 @@ const MapScreen = () => {
             <Marker
               key={location.id}
               coordinate={{ latitude: location.coords.lat, longitude: location.coords.lon }}
-            >
-              <Callout tooltip>
-                <TouchableHighlight underlayColor="#eeeeee" style={styles.calloutContainer}>
-                  <View style={styles.calloutContent}>
-                    <Text
-                      style={styles.temperatureText}
-                    >{`Temp: ${location.weather[0].temperature}`}</Text>
-                    <Text
-                      style={styles.temperatureText}
-                    >{`Wind: ${location.weather[0].windSpeed}`}</Text>
-                    <Text
-                      style={styles.temperatureText}
-                    >{`Cloud: ${location.weather[0].cloud_level}`}</Text>
-                  </View>
-                </TouchableHighlight>
-              </Callout>
-            </Marker>
+            />
           )
         })}
       </MapViewCluster>

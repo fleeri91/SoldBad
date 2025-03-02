@@ -5,6 +5,8 @@ import { getDistance } from 'geolib'
 
 import { FeatureRoot } from 'types/BadVattenFeature'
 import { Location } from 'types/Location'
+import { BadVattenRoot } from 'types/BadVatten'
+import { WaterTypeId } from 'types/WaterType'
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL
 
@@ -17,6 +19,7 @@ type LocationState = {
 
 type LocationActions = {
   getLocations: () => void
+  getBathingWaters: () => void
   filterLocationsByRadius: (latitude: number, longitude: number, radius: number) => void
 }
 
@@ -65,6 +68,20 @@ export const useLocationStore = create<LocationState & LocationActions>()(
           set({ loading: false, error: 'Failed to load locations' })
         }
       },
+      getBathingWaters: async () => {
+        try {
+          const response = await fetch(
+            'https://gw-test.havochvatten.se/external-public/bathing-waters/v1/bathing-waters'
+          )
+          const data: BadVattenRoot = await response.json()
+          console.log(
+            data.filter((item) => item.bathingWater.waterTypeId == WaterTypeId.DELTA).length
+          )
+        } catch (error) {
+          console.error('Failed to fetch bathing waters:', error)
+          set({ loading: false, error: 'Failed to load bathing waters' })
+        }
+      },
       filterLocationsByRadius: async (latitude, longitude, radius) => {
         const locations = get().locations
 
@@ -74,6 +91,7 @@ export const useLocationStore = create<LocationState & LocationActions>()(
           return distance <= radius * 1000
         })
 
+        /*
         try {
           const response = await fetch(`${apiUrl}/weather`, {
             method: 'POST',
@@ -98,6 +116,7 @@ export const useLocationStore = create<LocationState & LocationActions>()(
           console.error('Error fetching weather data:', error)
           set({ error: 'Failed to fetch weather data' })
         }
+          */
       },
     }),
     {
