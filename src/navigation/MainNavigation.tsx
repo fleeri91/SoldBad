@@ -5,14 +5,17 @@ import { useColorScheme } from 'react-native'
 
 import { CustomLightTheme, CustomDarkTheme } from 'src/theme/colors'
 
+import DebugScreen from 'screens/DebugScreen'
 import OnboardingScreen from 'screens/OnboardingScreen'
 import MapScreen from 'screens/MapScreen'
 import AllowPermissionScreen from 'screens/AllowPermissionScreen'
 
 import { useGeoStore } from 'store/useGeo'
 import { useSettingsStore } from 'store/useSettings'
+import { IS_DEBUGGING } from 'app-settings'
 
 export type RootStackParamList = {
+  Debug: undefined
   AllowPermission: undefined
   Onboarding: undefined
   Map: undefined
@@ -30,7 +33,10 @@ const MainNavigation = () => {
 
   return (
     <NavigationContainer theme={appTheme}>
-      <Stack.Navigator initialRouteName={!geoLocation ? 'Onboarding' : 'AllowPermission'}>
+      <Stack.Navigator
+        initialRouteName={IS_DEBUGGING ? 'Debug' : !geoLocation ? 'Onboarding' : 'AllowPermission'}
+      >
+        <Stack.Screen name="Debug" options={{ headerShown: false }} component={DebugScreen} />
         <Stack.Screen
           name="AllowPermission"
           options={{ headerShown: false }}
