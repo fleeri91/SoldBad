@@ -1,17 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { StyleSheet, TouchableHighlight, View, Text } from 'react-native'
-import MapView, { Marker, Callout } from 'react-native-maps'
+import { StyleSheet, View } from 'react-native'
+import MapView, { Marker } from 'react-native-maps'
 import MapViewCluster from 'react-native-map-clustering'
 
 import { useGeoStore } from 'store/useGeo'
 import { usePreferencesStore } from 'store/usePreferences'
 import { useLocationStore } from 'store/useLocations'
 
-const MapScreen = () => {
+const MapScreenCluster = () => {
   const { geoLocation } = useGeoStore()
   const { distance } = usePreferencesStore()
-  const { filteredLocations, getLocations, filterLocationsByRadius, getBathingWaters } =
-    useLocationStore()
+  const { filteredLocations, getLocations, filterLocationsByRadius } = useLocationStore()
 
   const [region, setRegion] = useState({
     latitude: 0,
@@ -29,16 +28,6 @@ const MapScreen = () => {
   }, [getLocations])
 
   useEffect(() => {
-    getBathingWaters()
-  }, [getBathingWaters])
-
-  useEffect(() => {
-    if (geoLocation?.coords?.latitude && geoLocation?.coords?.longitude) {
-      filterLocationsByRadius(geoLocation.coords.latitude, geoLocation.coords.longitude, distance)
-    }
-  }, [geoLocation, distance, filterLocationsByRadius])
-
-  useEffect(() => {
     if (geoLocation?.coords?.latitude && geoLocation?.coords?.longitude) {
       setRegion({
         latitude: geoLocation.coords.latitude,
@@ -48,6 +37,12 @@ const MapScreen = () => {
       })
     }
   }, [geoLocation])
+
+  useEffect(() => {
+    if (geoLocation?.coords?.latitude && geoLocation?.coords?.longitude) {
+      filterLocationsByRadius(geoLocation.coords.latitude, geoLocation.coords.longitude, distance)
+    }
+  }, [geoLocation, distance, filterLocationsByRadius])
 
   useEffect(() => {
     if (filteredLocations.length > 0) {
@@ -140,4 +135,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default MapScreen
+export default MapScreenCluster
