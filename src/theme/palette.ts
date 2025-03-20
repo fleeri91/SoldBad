@@ -1,4 +1,4 @@
-export const palette = {
+export const Palette = {
   transparent: 'transparent',
   current: 'currentColor',
 
