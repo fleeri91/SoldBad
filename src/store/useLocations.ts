@@ -8,8 +8,6 @@ import { Location } from 'types/Location'
 import { BadVattenRoot } from 'types/BadVatten'
 import { WaterTypeId } from 'types/WaterType'
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL
-
 type LocationState = {
   locations: Location[]
   filteredLocations: Location[]
@@ -19,7 +17,7 @@ type LocationState = {
 
 type LocationActions = {
   getLocations: () => void
-  getBathingWaters: () => void
+  getLocationInfo: () => void
   filterLocationsByRadius: (latitude: number, longitude: number, radius: number) => void
 }
 
@@ -36,10 +34,24 @@ export const useLocationStore = create<LocationState & LocationActions>()(
       ...initialState,
       getLocations: async () => {
         try {
-          const response = await fetch('https://badplatsen.havochvatten.se/badplatsen/api/feature/')
-          const data: FeatureRoot = await response.json()
+          const responseFeatures = await fetch(
+            'https://badplatsen.havochvatten.se/badplatsen/api/feature/'
+          )
+          const responseBathingWaters = await fetch(
+            'https://gw-test.havochvatten.se/external-public/bathing-waters/v1/bathing-waters'
+          )
 
-          const locations: Location[] = data.features
+          const featuresData: FeatureRoot = await responseFeatures.json()
+          const bathingWaterData: BadVattenRoot = await responseBathingWaters.json()
+
+          const validNutsCodes = new Set(
+            bathingWaterData
+              .filter((bathingWater) => bathingWater.bathingWater.waterTypeId === WaterTypeId.HAV)
+              .map((bathingWater) => bathingWater.bathingWater.nutsCode)
+          )
+
+          const locations: Location[] = featuresData.features
+            .filter((feature) => validNutsCodes.has(feature.properties.NUTSKOD))
             .map((feature) => {
               const { id, geometry } = feature
               const coords = geometry?.coordinates
@@ -47,7 +59,8 @@ export const useLocationStore = create<LocationState & LocationActions>()(
               if (coords && coords.length === 2) {
                 const [lon, lat] = coords
                 return {
-                  id,
+                  id: feature.properties.NUTSKOD,
+                  name: feature.properties.NAMN,
                   coords: {
                     lat,
                     lon,
@@ -68,59 +81,24 @@ export const useLocationStore = create<LocationState & LocationActions>()(
           set({ loading: false, error: 'Failed to load locations' })
         }
       },
-      getBathingWaters: async () => {
-        try {
-          const response = await fetch(
-            'https://gw-test.havochvatten.se/external-public/bathing-waters/v1/bathing-waters'
-          )
-          const data: BadVattenRoot = await response.json()
-          console.log(
-            data.filter((item) => item.bathingWater.waterTypeId == WaterTypeId.DELTA).length
-          )
-        } catch (error) {
-          console.error('Failed to fetch bathing waters:', error)
-          set({ loading: false, error: 'Failed to load bathing waters' })
-        }
-      },
+      getLocationInfo() {},
       filterLocationsByRadius: async (latitude, longitude, radius) => {
         const locations = get().locations
 
-        const filtered = locations.filter((location) => {
+        const filteredLocations = locations.filter((location) => {
           const { lat, lon } = location.coords
           const distance = getDistance({ latitude, longitude }, { latitude: lat, longitude: lon })
           return distance <= radius * 1000
         })
-
-        /*
-        try {
-          const response = await fetch(`${apiUrl}/weather`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              locations: filtered,
-            }),
-          })
-
-          if (!response.ok) {
-            throw new Error('Failed to fetch weather data')
-          }
-
-          const weatherResults: Location[] = await response.json()
-
-          set({
-            filteredLocations: weatherResults,
-          })
-        } catch (error) {
-          console.error('Error fetching weather data:', error)
-          set({ error: 'Failed to fetch weather data' })
-        }
-          */
+        set({
+          filteredLocations,
+          loading: false,
+          error: null,
+        })
       },
     }),
     {
-      name: 'location-storage',
+      name: 'locationv1-storage',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )
