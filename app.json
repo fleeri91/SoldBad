@@ -15,13 +15,15 @@
       "NSLocationWhenInUseUsageDescription": "This app needs access to your location to suggest nearby places."
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.solbad"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.solbad"
     },
     "web": {
       "favicon": "./assets/favicon.png"
