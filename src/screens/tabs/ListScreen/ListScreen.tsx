@@ -1,26 +1,39 @@
-import { useEffect } from 'react'
 import { View, Text, FlatList } from 'react-native'
-
-import { useLocationStore } from 'store/useLocations'
+import { useQuery } from '@tanstack/react-query'
 
 import { styles } from './styles'
+import { fetchBathingWaters } from 'api'
 
 const ListScreen = () => {
-  const { getLocations, locations } = useLocationStore()
+  const { isPending, error, data } = useQuery({
+    queryKey: ['bathing-waters'],
+    queryFn: fetchBathingWaters,
+  })
 
-  useEffect(() => {
-    getLocations()
-  }, [])
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error fetching bathing waters</Text>
+      </View>
+    )
+  }
 
+  if (isPending) {
+    return (
+      <View style={styles.container}>
+        <Text>Fetching...</Text>
+      </View>
+    )
+  }
   return (
     <View style={styles.container}>
       <FlatList
         style={styles.list}
-        data={locations}
-        keyExtractor={(item) => item.id.toString()}
+        data={data}
+        keyExtractor={(item) => item.bathingWater.nutsCode.toString()}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <Text style={styles.itemText}>{item.name}</Text>
+            <Text style={styles.itemText}>{item.bathingWater.name}</Text>
           </View>
         )}
         ListEmptyComponent={<Text>No locations available</Text>}
