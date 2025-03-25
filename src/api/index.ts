@@ -1,8 +1,8 @@
-import { BadVattenRoot, BadVatten } from 'types/BadVatten'
+import { BathingWaterRoot, BathingWater } from 'types/BathingWater'
 import { WaterTypeId } from 'types/WaterType'
 import { delay } from 'utils/helpers'
 
-export const fetchBathingWaters = async (): Promise<BadVatten[]> => {
+export const fetchBathingWaters = async (): Promise<BathingWater[]> => {
   console.log('Fetching bathing waters...')
 
   await delay(200 + Math.floor(Math.random() * 2000))
@@ -14,7 +14,7 @@ export const fetchBathingWaters = async (): Promise<BadVatten[]> => {
       }
       return response.json()
     })
-    .then((bathingWaterData: BadVattenRoot) => {
+    .then((bathingWaterData: BathingWaterRoot) => {
       return bathingWaterData.filter(
         (bathingWater) => bathingWater.bathingWater.waterTypeId === WaterTypeId.HAV
       )
