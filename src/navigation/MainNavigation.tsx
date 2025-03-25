@@ -36,9 +36,7 @@ const MainNavigation = () => {
 
   return (
     <NavigationContainer theme={appTheme}>
-      <Stack.Navigator
-        initialRouteName={IS_DEBUGGING ? 'Debug' : !geoLocation ? 'Onboarding' : 'Home'}
-      >
+      <Stack.Navigator initialRouteName={IS_DEBUGGING ? 'Debug' : 'Home'}>
         <Stack.Screen name="Debug" options={{ headerShown: false }} component={DebugScreen} />
         {/*
         <Stack.Screen
