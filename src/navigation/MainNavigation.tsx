@@ -1,19 +1,24 @@
+/** Libraries */
 import React from 'react'
+import { useColorScheme } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { useColorScheme } from 'react-native'
 
+/** Screens */
 import DebugScreen from 'screens/DebugScreen'
-import OnboardingScreen from 'screens/OnboardingScreen'
-import MapScreenCluster from 'screens/tabs/MapScreenCluster'
 import MapScreen from 'screens/tabs/MapScreen'
-import AllowPermissionScreen from 'screens/AllowPermissionScreen'
+import ListScreen from 'screens/tabs/ListScreen'
+import BathingWaterInfoScreen from 'screens/BathingWaterInfoScreen'
 
+/** Store */
 import { useGeoStore } from 'store/useGeo'
 import { useSettingsStore } from 'store/useSettings'
+
+/** Constants */
 import { IS_DEBUGGING } from 'app-settings'
-import ListScreen from 'screens/tabs/ListScreen'
+
+/** Theme */
 import { darkTheme, lightTheme } from 'src/theme'
 
 export type RootStackParamList = {
@@ -21,13 +26,13 @@ export type RootStackParamList = {
   AllowPermission: undefined
   Onboarding: undefined
   Home: undefined
+  BathingWaterInfo: { id: string }
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
 const Tab = createBottomTabNavigator()
 
 const MainNavigation = () => {
-  const { geoLocation } = useGeoStore()
   const colorScheme = useColorScheme()
 
   const { theme } = useSettingsStore()
@@ -38,19 +43,12 @@ const MainNavigation = () => {
     <NavigationContainer theme={appTheme}>
       <Stack.Navigator initialRouteName={IS_DEBUGGING ? 'Debug' : 'Home'}>
         <Stack.Screen name="Debug" options={{ headerShown: false }} component={DebugScreen} />
-        {/*
-        <Stack.Screen
-          name="AllowPermission"
-          options={{ headerShown: false }}
-          component={AllowPermissionScreen}
-        />
-        <Stack.Screen
-          name="Onboarding"
-          options={{ headerShown: false }}
-          component={OnboardingScreen}
-        />
-        */}
         <Stack.Screen name="Home" options={{ headerShown: false }} component={TabNavigator} />
+        <Stack.Screen
+          name="BathingWaterInfo"
+          options={{ headerShown: false }}
+          component={BathingWaterInfoScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
