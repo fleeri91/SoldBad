@@ -20,7 +20,7 @@ export const lightTheme = {
     ...DefaultTheme.colors,
     primary: Palette.blue[400],
     background: Palette.white,
-    card: '#e0dede',
+    card: Palette.white,
     text: '#2b2b2b',
     border: '#b7b7b7',
     notification: '#436195',
