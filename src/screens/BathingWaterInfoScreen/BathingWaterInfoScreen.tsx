@@ -3,7 +3,7 @@ import { RouteProp, useRoute } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 
 import { styles } from './styles'
-import { fetchBathingWaterInfo } from 'api'
+import { fetchBathingWaterInfo } from 'src/api/BathingWater'
 import { RootStackParamList } from 'navigation/MainNavigation'
 
 type BathingWaterInfoScreenRouteProp = RouteProp<RootStackParamList, 'BathingWaterInfo'>
