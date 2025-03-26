@@ -4,7 +4,7 @@ import MapView, { Marker } from 'react-native-maps'
 
 import { styles } from './styles'
 import { useQuery } from '@tanstack/react-query'
-import { fetchBathingWaters } from 'api'
+import { fetchBathingWaters } from 'src/api/BathingWater'
 
 const MapScreen = () => {
   const [region, setRegion] = useState({

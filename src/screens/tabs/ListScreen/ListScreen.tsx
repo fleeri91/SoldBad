@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import { useQuery } from '@tanstack/react-query'
 
 import { styles } from './styles'
-import { fetchBathingWaters } from 'api'
+import { fetchBathingWaters } from 'src/api/BathingWater'
 import { RootStackParamList } from 'navigation/MainNavigation'
 
 type BathingWaterInfoScreenNavigationProp = StackNavigationProp<
