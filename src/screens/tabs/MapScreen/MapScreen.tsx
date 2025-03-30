@@ -14,17 +14,14 @@ const MapScreen = () => {
     longitudeDelta: 20,
   })
 
-  const { isPending, error, data } = useQuery({
+  const { isPending, isError, error, data } = useQuery({
     queryKey: ['bathing-waters'],
     queryFn: fetchBathingWaters,
+    retry: false,
   })
 
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text>Error fetching bathing waters</Text>
-      </View>
-    )
+  if (isError) {
+    throw error
   }
 
   if (isPending) {
